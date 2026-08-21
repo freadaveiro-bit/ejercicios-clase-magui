@@ -13,7 +13,7 @@
 void duplicarPuntero(int *x)
 {
     // TODO: duplicar el valor apuntado por x.
-    (void)x;
+    *x *= 2;
 }
 
 // Ejercicio 2 — Puntero vs referencia
@@ -28,8 +28,11 @@ int *crearArregloDeCuadrados(int n)
 {
     // TODO: reservar un arreglo de n enteros con new[] y llenarlo con los
     // cuadrados de 0 a n-1.
-    (void)n;
-    return nullptr;
+    int * arr = new int[n];
+    for (int i = 0; i < n; i++){
+        arr[i] = i * i;
+    }
+    return arr;
 }
 
 // Ejercicio 4 — Aritmética de punteros (lectura)
