@@ -58,22 +58,23 @@ int personasDestruidas = 0;
 Persona::Persona(const std::string &nombreInicial, int edadInicial)
 {
     // TODO: inicializar nombre y edad con los valores recibidos.
-    (void)nombreInicial;
-    (void)edadInicial;
+    this->nombre = nombre;
+    this->edad = edad;
+
+
 }
 
 Persona::~Persona()
 {
     // TODO: incrementar personasDestruidas para avisar que este objeto murió.
+    personasDestruidas ++;
 }
 
 Persona *crearPersona(const std::string &nombre, int edad)
 {
     // TODO: reservar una Persona en el heap con new, usando el constructor,
     // y devolver el puntero.
-    (void)nombre;
-    (void)edad;
-    return nullptr;
+    return new Persona(nombre, edad);
 }
 
 // Ejercicio 7 — Redimensionar un arreglo dinámico
@@ -82,10 +83,13 @@ int *agregarElemento(int *arreglo, int tamanioActual, int nuevoElemento)
     // TODO: crear un nuevo arreglo de tamaño (tamanioActual + 1), copiar los
     // elementos viejos, agregar nuevoElemento al final, liberar el arreglo
     // viejo, y devolver el nuevo.
-    (void)arreglo;
-    (void)tamanioActual;
-    (void)nuevoElemento;
-    return nullptr;
+   int * arregloNuevo = new int[tamanioActual + 1];
+   for(int i = 0; i < tamanioActual; i++){
+    arregloNuevo[i] = arreglo [i];
+   }
+   arregloNuevo[tamanioActual] = nuevoElemento;
+   delete[] arreglo;
+   return arregloNuevo;
 }
 
 // Ejercicio 8 — Lista enlazada dinámica
