@@ -132,22 +132,41 @@ double maxima(const std::vector<double> &notas) {
 // Ejercicio 9 — Contar vocales
 int contarVocales(const std::string &texto) {
     // TODO: contar vocales sin distinguir mayúsculas de minúsculas.
-    (void)texto;
-    return 0;
+    int total_vocales = 0;
+    for (char letra : texto){
+        if (letra == 'a' or letra == 'A' or letra == 'e' or letra == 'E' or letra == 'i' or letra == 'I' or letra == 'o' or letra == 'O' or letra == 'u' or letra == 'U'){
+            total_vocales ++;
+        }
+    }
+    return total_vocales;
 }
 
 // Propuesto 1 — invertir in-place
 void invertir(std::vector<int> &v) {
     // TODO: invertir el orden de los elementos sin crear otro vector.
-    (void)v;
+    size_t tam_ = v.size();
+    for (size_t i = 0; i < tam_ / 2; i++){
+        int temporal = v[i];
+        v[i] = v[tam_ - 1 - i];
+        v[tam_ - 1 - i] = temporal;
+    }
 }
 
 
 // Propuesto 2 — contar palabras
 int contarPalabras(const std::string &oracion) {
     // TODO: contar palabras separadas por un único espacio.
-    (void)oracion;
-    return 0;
+    int palabras = 0;
+    if (oracion.size() == 0){
+        return palabras;
+    }
+    for (char letra : oracion){
+        if (letra == ' '){
+            palabras++;
+        }
+    }
+    palabras++;
+    return palabras;
 }
 
 
@@ -155,45 +174,50 @@ int contarPalabras(const std::string &oracion) {
 Punto::Punto(double xInicial, double yInicial)
 {
     // TODO: inicializar x e y con los valores recibidos.
-    (void)xInicial;
-    (void)yInicial;
+    x = xInicial;
+    y = yInicial;
+
 }
 
 double Punto::distanciaAlOrigen() const
 {
     // TODO: devolver la distancia entre este punto y el origen (0, 0).
-    return 0.0;
+    return std::sqrt( (x*x) + (y*y) );
 }
 
 double Punto::distanciaA(const Punto &otro) const
 {
     // TODO: devolver la distancia entre este punto y "otro".
-    (void)otro;
-    return 0.0;
+    double dx = x - otro.x;
+    double dy = y - otro.y;
+    double dist = std::sqrt(dx * dx + dy * dy);
+    return dist;
 }
 
 // Ejercicio 11 — Clase Rectangulo
 Rectangulo::Rectangulo(double baseInicial, double alturaInicial)
 {
     // TODO: inicializar base y altura con los valores recibidos.
-    (void)baseInicial;
-    (void)alturaInicial;
+    base = baseInicial;
+    altura = alturaInicial;
 }
 
 double Rectangulo::area() const
 {
     // TODO: devolver el área del rectángulo (base * altura).
-    return 0.0;
+    double area = (base * altura);
+    return area;
 }
 
 double Rectangulo::perimetro() const
 {
     // TODO: devolver el perímetro del rectángulo (2 * (base + altura)).
-    return 0.0;
+    return (2 * (base + altura));
 }
 
 bool Rectangulo::esCuadrado() const
 {
     // TODO: devolver true si el rectángulo es un cuadrado (base == altura).
+    if (base == altura) return true;
     return false;
 }

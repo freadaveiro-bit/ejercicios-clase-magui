@@ -20,7 +20,7 @@ void duplicarPuntero(int *x)
 void duplicarReferencia(int &x)
 {
     // TODO: duplicar x (recibido por referencia).
-    (void)x;
+    x *=2;
 }
 
 // Ejercicio 3 — Arreglo dinámico con new[]
@@ -28,7 +28,7 @@ int *crearArregloDeCuadrados(int n)
 {
     // TODO: reservar un arreglo de n enteros con new[] y llenarlo con los
     // cuadrados de 0 a n-1.
-    int * arr = new int[n];
+    int *arr = new int[n];
     for (int i = 0; i < n; i++){
         arr[i] = i * i;
     }
@@ -39,17 +39,21 @@ int *crearArregloDeCuadrados(int n)
 int sumarArregloPuntero(const int *arreglo, int tamanio)
 {
     // TODO: sumar los tamanio elementos de arreglo usando *(arreglo + i).
-    (void)arreglo;
-    (void)tamanio;
-    return 0;
+    int total = 0;
+    for (int i = 0; i < tamanio; i++){
+        int elem = *(arreglo + i);
+        total += elem;
+    }
+    return total;
 }
 
 // Ejercicio 5 — Aritmética de punteros (escritura)
 void duplicarValores(int *arreglo, int tamanio)
 {
     // TODO: duplicar cada elemento in-place usando *(arreglo + i) = ...
-    (void)arreglo;
-    (void)tamanio;
+    for (int i  = 0; i < tamanio; i++){
+        *(arreglo + i) *= 2;
+    }
 }
 
 // Ejercicio 6 — Struct en el heap: constructor y destructor
@@ -58,10 +62,8 @@ int personasDestruidas = 0;
 Persona::Persona(const std::string &nombreInicial, int edadInicial)
 {
     // TODO: inicializar nombre y edad con los valores recibidos.
-    this->nombre = nombre;
-    this->edad = edad;
-
-
+    nombre = nombreInicial;
+    edad = edadInicial;
 }
 
 Persona::~Persona()
@@ -83,13 +85,13 @@ int *agregarElemento(int *arreglo, int tamanioActual, int nuevoElemento)
     // TODO: crear un nuevo arreglo de tamaño (tamanioActual + 1), copiar los
     // elementos viejos, agregar nuevoElemento al final, liberar el arreglo
     // viejo, y devolver el nuevo.
-   int * arregloNuevo = new int[tamanioActual + 1];
-   for(int i = 0; i < tamanioActual; i++){
-    arregloNuevo[i] = arreglo [i];
+   int *arr = new int[tamanioActual + 1];
+   for (int i = 0; i < tamanioActual; i++){
+        arr[i] = *(arreglo + i);
    }
-   arregloNuevo[tamanioActual] = nuevoElemento;
+   arr[tamanioActual] = nuevoElemento;
    delete[] arreglo;
-   return arregloNuevo;
+   return arr;
 }
 
 // Ejercicio 8 — Lista enlazada dinámica
@@ -97,21 +99,40 @@ Nodo *crearCadena(const std::vector<int> &valores)
 {
     // TODO: crear un nodo por cada valor de `valores` (en el mismo orden),
     // enlazarlos con `siguiente`, y devolver un puntero al primero.
-    (void)valores;
-    return nullptr;
+    int tam = static_cast<int> (valores.size());
+    Nodo *cabeza = nullptr;
+    for (int i = 0; i < tam; i++){
+        int valor = valores[tam - 1 - i];
+        Nodo *nuevo = new Nodo();
+        nuevo->valor = valor;
+        nuevo->siguiente = cabeza;
+        cabeza = nuevo;
+    }
+    return cabeza;
 }
 
 int sumarCadena(const Nodo *cabeza)
 {
     // TODO: recorrer la cadena sumando los valores de cada nodo.
-    (void)cabeza;
-    return 0;
+    const Nodo *actual = cabeza;
+    int total = 0;
+    while (actual != nullptr){
+        int valor = actual->valor;
+        total += valor;
+        actual = actual->siguiente;
+    }
+    return total;
 }
 
 void liberarCadena(Nodo *cabeza)
 {
     // TODO: liberar TODOS los nodos de la cadena, uno por uno.
-    (void)cabeza;
+    Nodo *actual = cabeza;
+    while (actual != nullptr){
+        Nodo *siguiente = actual->siguiente;
+        delete actual;
+        actual = siguiente; 
+    }
 }
 
 // Propuesto 1 — Matriz dinámica
@@ -119,6 +140,8 @@ void liberarMatriz(int **matriz, int filas)
 {
     // TODO: liberar cada fila (con delete[]) y después el arreglo de
     // punteros (también con delete[]).
-    (void)matriz;
-    (void)filas;
+   for (int i = 0; i < filas; i++){
+        delete[] matriz[i];
+   }
+   delete[] matriz;
 }

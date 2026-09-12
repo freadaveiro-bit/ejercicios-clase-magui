@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <cmath>
 
 // ============================================================================
 // Tut 01 - Introducción a C++
