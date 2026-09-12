@@ -1,0 +1,23 @@
+# macOS
+.DS_Store
+
+# Compiled object files
+*.o
+
+# Executables (common names in this project)
+# Anchored to "<carpeta>/<mismo nombre>" para no ignorar carpetas enteras
+# (p. ej. "ejercicios-extra" como patrón pelado ignoraría toda la carpeta).
+**/ejercicios/ejercicios
+**/ejercicios-extra/ejercicios-extra
+ejercicio-tap
+ejercicios-strings
+hello-word
+i++vs++i
+max_subarray_sum_tests
+
+# Generic executable patterns (no extension, compiled binaries)
+*.out
+a.out
+
+# Soluciones (no commitear)
+*_resueltos.cpp
