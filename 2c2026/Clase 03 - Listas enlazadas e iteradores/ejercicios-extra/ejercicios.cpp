@@ -57,14 +57,14 @@ int &ListaIterable::Iterador::operator*()
 {
     // TODO: devolver una referencia al dato del nodo actual.
     // Precondición: actual != nullptr (el iterador no es end()).
-    static int dummy = 0;
-    return dummy;
+    return actual->dato;
 }
 
 // Ejercicio 2 — Avanzar (prefijo)
 ListaIterable::Iterador &ListaIterable::Iterador::operator++()
 {
     // TODO: mover `actual` al siguiente nodo y devolver *this.
+    actual = actual->siguiente;
     return *this;
 }
 
@@ -73,7 +73,9 @@ bool ListaIterable::Iterador::operator!=(const Iterador &otro) const
 {
     // TODO: devolver true si `actual` es distinto del `actual` de `otro`.
     (void)actual; // Silencia warning hasta que implementes las funciones
-    (void)otro;
+    if (actual != otro.actual){
+        return true;
+    }
     return false;
 }
 
@@ -81,7 +83,7 @@ bool ListaIterable::Iterador::operator!=(const Iterador &otro) const
 ListaIterable::Iterador ListaIterable::begin() const
 {
     // TODO: devolver un Iterador apuntando al primer nodo.
-    return Iterador(nullptr);
+    return Iterador(primero);
 }
 
 // Ejercicio 5 — end()
