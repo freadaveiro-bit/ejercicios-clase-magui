@@ -38,7 +38,15 @@ void PilaArreglo::redimensionar()
     // TODO: duplicar `capacidad`, reservar un arreglo nuevo con esa
     // capacidad, copiar los `cantidad` elementos existentes, liberar el
     // arreglo viejo y actualizar `datos`.
-    (void)capacidad; // Silencia warning hasta que implementes la función
+    size_t capacidad_n = capacidad*2;
+    int *arr_n = new int[capacidad_n];
+    for (size_t i = 0; i < cantidad; i++){
+        arr_n[i] = datos[i];
+    }
+    delete [] datos;
+    capacidad = capacidad_n;
+    datos = arr_n;
+ // Silencia warning hasta que implementes la función
 }
 
 void PilaArreglo::push(int valor)
@@ -46,7 +54,11 @@ void PilaArreglo::push(int valor)
     // TODO: si el arreglo está lleno (cantidad == capacidad), redimensionar.
     // Después, agregar `valor` en la posición `cantidad` e incrementar
     // `cantidad`.
-    (void)valor;
+    if (cantidad == capacidad){
+        redimensionar();
+    }
+    datos[cantidad] = valor;
+    cantidad++;
 }
 
 int PilaArreglo::pop()
@@ -54,14 +66,16 @@ int PilaArreglo::pop()
     // TODO: decrementar `cantidad` y devolver el valor que quedó en esa
     // posición (el que era el tope).
     // Precondición: !empty()
-    return 0;
+    int dato_g = datos[cantidad];
+    cantidad--;
+    return dato_g;
 }
 
 int PilaArreglo::top() const
 {
     // TODO: devolver el valor de la posición `cantidad - 1`.
     // Precondición: !empty()
-    return 0;
+    return datos[cantidad];
 }
 
 // ----------------------------------------------------------------------------
@@ -100,7 +114,15 @@ void ColaArreglo::redimensionar()
     // VIEJA). Liberar el arreglo viejo, actualizar `datos` y `capacidad`, y
     // dejar `frente` en 0 (ahora el primer elemento quedó en la posición 0).
     (void)capacidad; // Silencia warnings hasta que implementes la función
-    (void)frente;
+    size_t capacidad_n = capacidad * 2;
+    int *datos_n = new int[capacidad_n];
+    for (size_t i = 0; i < capacidad; i++){
+        datos_n[i] = datos[(frente + i) % capacidad];
+    }
+    delete [] datos;
+    datos = datos_n;
+    capacidad = capacidad_n;
+    frente = 0;
 }
 
 void ColaArreglo::enqueue(int valor)
@@ -109,7 +131,12 @@ void ColaArreglo::enqueue(int valor)
     // Después, calcular la posición de inserción como
     // (frente + cantidad) % capacidad, guardar `valor` ahí, e incrementar
     // `cantidad`.
-    (void)valor;
+    if (cantidad == capacidad){
+        redimensionar();
+    }
+    size_t posicion = (frente + cantidad) % capacidad;
+    datos[posicion] = valor;
+    cantidad++;
 }
 
 int ColaArreglo::dequeue()
@@ -118,14 +145,17 @@ int ColaArreglo::dequeue()
     // circularmente ((frente + 1) % capacidad), decrementar `cantidad` y
     // devolver el valor guardado.
     // Precondición: !empty()
-    return 0;
+    int valor = datos[frente];
+    frente =  (frente + 1) % capacidad;
+    cantidad--;
+    return valor;
 }
 
 int ColaArreglo::front() const
 {
     // TODO: devolver el valor en la posición `frente`.
     // Precondición: !empty()
-    return 0;
+    return datos[frente];
 }
 
 // ----------------------------------------------------------------------------
@@ -142,6 +172,12 @@ PilaLista::~PilaLista()
 {
     // TODO: recorrer la pila haciendo pop() (o liberando nodo por nodo) hasta
     // que quede vacía.
+    Nodo *actual = tope;
+    while (actual != nullptr){
+        Nodo *siguiente = actual->siguiente;
+        delete actual;
+        actual = siguiente;
+    }
 }
 
 bool PilaLista::empty() const
@@ -160,7 +196,10 @@ void PilaLista::push(int valor)
 {
     // TODO: crear un nuevo nodo cuyo `siguiente` sea el `tope` actual, y
     // hacer que ese nuevo nodo pase a ser el `tope`. Incrementar `cantidad`.
-    (void)valor;
+    Nodo *anterior = (valor, nullptr);
+    anterior->siguiente = tope;
+    anterior = tope;
+    cantidad++;
 }
 
 int PilaLista::pop()
@@ -169,14 +208,17 @@ int PilaLista::pop()
     // siguiente nodo, liberar el nodo viejo con delete, decrementar
     // `cantidad` y devolver el dato guardado.
     // Precondición: !empty()
-    return 0;
+    int valor = tope->dato;
+    tope = tope->siguiente;
+    cantidad--;
+    return valor;
 }
 
 int PilaLista::top() const
 {
     // TODO: devolver el dato del nodo `tope`.
     // Precondición: !empty()
-    return 0;
+    return tope->dato;
 }
 
 // ----------------------------------------------------------------------------
@@ -193,7 +235,13 @@ ColaLista::~ColaLista()
 {
     // TODO: recorrer la cola haciendo dequeue() (o liberando nodo por nodo)
     // hasta que quede vacía.
-    (void)ultimo; // Silencia warning hasta que implementes las funciones
+    Nodo *actual = primero; 
+    while (actual !=  nullptr){
+        Nodo *siguiente = actual;
+        delete actual;
+        actual = siguiente;
+    }
+// Silencia warning hasta que implementes las funciones
 }
 
 bool ColaLista::empty() const
@@ -213,7 +261,16 @@ void ColaLista::enqueue(int valor)
     // TODO: crear un nuevo nodo. Si la cola estaba vacía, `primero` y
     // `ultimo` pasan a ser ese nuevo nodo. Si no, enlazar el nuevo nodo
     // después de `ultimo` y actualizar `ultimo`. Incrementar `cantidad`.
-    (void)valor;
+    Nodo *nuevo = (valor, nullptr);
+    if (ultimo == nullptr){
+        primero = nuevo;
+        ultimo = nuevo;
+    }
+    else{
+        ultimo->siguiente = nuevo;
+        ultimo = nuevo;
+    }
+    cantidad++;
 }
 
 int ColaLista::dequeue()
@@ -223,14 +280,22 @@ int ColaLista::dequeue()
     // debe quedar en nullptr), liberar el nodo viejo con delete, decrementar
     // `cantidad` y devolver el dato guardado.
     // Precondición: !empty()
-    return 0;
+    Nodo *primero_viejo = primero;
+    int valor = primero_viejo->dato;
+    primero = primero_viejo->siguiente;
+    if(primero == nullptr){
+        ultimo = nullptr;
+    }
+    delete primero_viejo;
+    cantidad--;
+    return valor;
 }
 
 int ColaLista::front() const
 {
     // TODO: devolver el dato del nodo `primero`.
     // Precondición: !empty()
-    return 0;
+    return primero->dato;
 }
 
 // ----------------------------------------------------------------------------
@@ -249,6 +314,7 @@ bool estaBalanceada(const std::string &expresion)
     // Al final, la expresión está balanceada si y solo si la pila quedó
     // vacía (no quedaron aperturas sin cerrar).
     (void)expresion;
+    
     return false;
 }
 
