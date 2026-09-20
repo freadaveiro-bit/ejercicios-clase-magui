@@ -1,4 +1,5 @@
 #include "ejercicios.h"
+#include <sstream>
 
 // ============================================================================
 // Acá va TU código. Cada función tiene una cáscara con un "TODO": borrá el
@@ -66,7 +67,7 @@ int PilaArreglo::pop()
     // TODO: decrementar `cantidad` y devolver el valor que quedó en esa
     // posición (el que era el tope).
     // Precondición: !empty()
-    int dato_g = datos[cantidad];
+    int dato_g = datos[cantidad - 1];
     cantidad--;
     return dato_g;
 }
@@ -75,7 +76,7 @@ int PilaArreglo::top() const
 {
     // TODO: devolver el valor de la posición `cantidad - 1`.
     // Precondición: !empty()
-    return datos[cantidad];
+    return datos[cantidad - 1];
 }
 
 // ----------------------------------------------------------------------------
@@ -196,9 +197,8 @@ void PilaLista::push(int valor)
 {
     // TODO: crear un nuevo nodo cuyo `siguiente` sea el `tope` actual, y
     // hacer que ese nuevo nodo pase a ser el `tope`. Incrementar `cantidad`.
-    Nodo *anterior = (valor, nullptr);
-    anterior->siguiente = tope;
-    anterior = tope;
+    Nodo *nuevo = new Nodo (valor, tope);
+    tope = nuevo;
     cantidad++;
 }
 
@@ -261,7 +261,7 @@ void ColaLista::enqueue(int valor)
     // TODO: crear un nuevo nodo. Si la cola estaba vacía, `primero` y
     // `ultimo` pasan a ser ese nuevo nodo. Si no, enlazar el nuevo nodo
     // después de `ultimo` y actualizar `ultimo`. Incrementar `cantidad`.
-    Nodo *nuevo = (valor, nullptr);
+    Nodo *nuevo = new Nodo (valor, nullptr);
     if (ultimo == nullptr){
         primero = nuevo;
         ultimo = nuevo;
@@ -313,8 +313,28 @@ bool estaBalanceada(const std::string &expresion)
     //   - Cualquier otro carácter se ignora.
     // Al final, la expresión está balanceada si y solo si la pila quedó
     // vacía (no quedaron aperturas sin cerrar).
-    (void)expresion;
-    
+    PilaArreglo pila = PilaArreglo();
+    for (char letra : expresion){
+        if (letra == '(' or letra == '[' or letra == '{'){
+            pila.push(letra);
+        }
+        else if(letra == ')' or letra == ']' or letra == '}'){
+            if (pila.tamanio() == 0) return false;
+            else{
+                if((letra == ')' and pila.top() == '(') or 
+                    (letra == ']' and pila.top() == '[') or
+                    (letra == '}' and pila.top() == '{')){
+                    pila.pop();
+                }
+                else{
+                    return false;
+                }
+            }
+        }
+    }
+    if (pila.tamanio() == 0){
+        return true;
+    }
     return false;
 }
 
@@ -331,8 +351,35 @@ int evaluarPostfija(const std::string &expresion)
     //     segundo desapilado es el operando izquierdo), aplicar la
     //     operación y apilar el resultado.
     // Al final, el resultado es el único valor que queda en la pila.
-    (void)expresion;
-    return 0;
+    PilaArreglo pila;
+    std::istringstream iss(expresion);
+    std::string token;
+
+    while( iss >> token){
+        if (token == "+" || token == "-" || token == "*" || token == "/"){
+            int derecho = pila.pop();
+            int izquierdo = pila.pop();
+            int resultado;
+            if (token == "+") {
+                resultado = izquierdo + derecho;
+            } 
+            else if (token == "-") {
+                resultado = izquierdo - derecho;
+            } 
+            else if (token == "*") {
+                resultado = izquierdo * derecho;
+            } 
+            else {
+                resultado = izquierdo / derecho;
+            }
+            pila.push(resultado);
+        }
+        else {
+            int numero = std::stoi(token);
+            pila.push(numero);
+        }
+    }
+    return pila.top();
 }
 
 // ----------------------------------------------------------------------------
@@ -346,7 +393,13 @@ void invertirPila(PilaArreglo &pila)
     // Pista: si vas desapilando `pila` y encolando cada valor en la cola
     // (en ese orden), y después vas desencolando y apilando de nuevo en
     // `pila`, el resultado queda invertido. Pensá por qué.
-    (void)pila;
+    ColaArreglo cola;
+    while (not pila.empty()){
+        cola.enqueue(pila.pop());
+    }
+    while (not cola.empty()){
+        pila.push(cola.dequeue());
+    }
 }
 
 // ----------------------------------------------------------------------------
@@ -356,7 +409,7 @@ void invertirPila(PilaArreglo &pila)
 void ColaConDosPilas::enqueue(int valor)
 {
     // TODO: apilar `valor` en `entrada`.
-    (void)valor;
+    entrada.push(valor);
 }
 
 int ColaConDosPilas::dequeue()
@@ -365,7 +418,12 @@ int ColaConDosPilas::dequeue()
     // en `salida` (desapilando de una y apilando en la otra), lo que
     // invierte el orden. Después, desapilar y devolver el tope de `salida`.
     // Precondición: !empty()
-    return 0;
+    if(salida.empty()){
+        while (not entrada.empty()){
+            salida.push(entrada.pop());
+        }
+    }
+    return salida.pop();
 }
 
 int ColaConDosPilas::front()
@@ -373,20 +431,25 @@ int ColaConDosPilas::front()
     // TODO: igual que dequeue(), pero sin eliminar el elemento (usar top()
     // de `salida` en vez de pop()).
     // Precondición: !empty()
-    return 0;
+    if(salida.empty()){
+        while (not entrada.empty()){
+            salida.push(entrada.pop());
+        }
+    }
+    return salida.top();
 }
 
 bool ColaConDosPilas::empty() const
 {
     // TODO: la cola está vacía si y solo si AMBAS pilas están vacías.
-    return true;
+    return entrada.empty() && salida.empty();
 }
 
 size_t ColaConDosPilas::tamanio() const
 {
     // TODO: la cantidad total de elementos es la suma de los tamaños de
     // ambas pilas.
-    return 0;
+    return entrada.tamanio() + salida.tamanio();
 }
 
 // ----------------------------------------------------------------------------
@@ -399,7 +462,10 @@ void PilaConMinimo::push(int valor)
     // `minimos` si `minimos` está vacía o si `valor` es menor o igual al
     // mínimo actual (minimos.top()). Así, `minimos.top()` es siempre el
     // mínimo vigente entre los elementos que quedan en la pila.
-    (void)valor;
+    valores.push(valor);
+    if (minimos.empty() or valor <= minimos.top()){
+        minimos.push(valor);
+    }
 }
 
 int PilaConMinimo::pop()
@@ -408,33 +474,37 @@ int PilaConMinimo::pop()
     // mínimo actual (minimos.top()), desapilar también de `minimos` (ese
     // mínimo dejó de estar vigente). Devolver el valor desapilado.
     // Precondición: !empty()
-    return 0;
+    int valor = valores.pop();
+    if (valor == minimos.top()){
+        minimos.pop();
+    }
+    return valor;
 }
 
 int PilaConMinimo::top() const
 {
     // TODO: devolver el tope de `valores`.
     // Precondición: !empty()
-    return 0;
+    return valores.top();
 }
 
 int PilaConMinimo::minimo() const
 {
     // TODO: devolver el tope de `minimos` (el mínimo vigente), en O(1).
     // Precondición: !empty()
-    return 0;
+    return minimos.top();
 }
 
 bool PilaConMinimo::empty() const
 {
     // TODO: la pila está vacía si `valores` está vacía.
-    return true;
+    return valores.tamanio() == 0;
 }
 
 size_t PilaConMinimo::tamanio() const
 {
     // TODO: devolver la cantidad de elementos de `valores`.
-    return 0;
+    return valores.tamanio();
 }
 
 // ----------------------------------------------------------------------------

@@ -23,8 +23,10 @@ void preorder(NodoAB<int>* nodo, std::vector<int>& resultado)
     //   - Primero agregar el valor del nodo actual al resultado.
     //   - Luego recorrer recursivamente el subárbol izquierdo.
     //   - Finalmente recorrer recursivamente el subárbol derecho.
-    (void)nodo;
-    (void)resultado;
+    if ( nodo == nullptr) return;
+    resultado.push_back(nodo->valor);
+    preorder(nodo->izq, resultado);
+    preorder(nodo->der, resultado);
 }
 
 // Ejercicio 2 — Inorder
@@ -36,8 +38,12 @@ void inorder(NodoAB<int>* nodo, std::vector<int>& resultado)
     //   - Primero recorrer recursivamente el subárbol izquierdo.
     //   - Luego agregar el valor del nodo actual al resultado.
     //   - Finalmente recorrer recursivamente el subárbol derecho.
-    (void)nodo;
-    (void)resultado;
+    if (nodo != nullptr){
+        inorder(nodo->izq, resultado);
+        resultado.push_back(nodo->valor);
+        inorder(nodo->der, resultado);
+    }
+    return;
 }
 
 // Ejercicio 3 — Postorder
@@ -49,8 +55,12 @@ void postorder(NodoAB<int>* nodo, std::vector<int>& resultado)
     //   - Primero recorrer recursivamente el subárbol izquierdo.
     //   - Luego recorrer recursivamente el subárbol derecho.
     //   - Finalmente agregar el valor del nodo actual al resultado.
-    (void)nodo;
-    (void)resultado;
+    if (nodo != nullptr){
+        inorder(nodo->izq, resultado);
+        inorder(nodo->der, resultado);
+        resultado.push_back(nodo->valor);
+    }
+    return;
 }
 
 // ============================================================================
@@ -65,8 +75,8 @@ int altura(NodoAB<int>* nodo)
     //   - Si el nodo es nulo, la altura es 0.
     //   - Si no, la altura es 1 + el máximo entre la altura del subárbol
     //     izquierdo y la altura del subárbol derecho.
-    (void)nodo;
-    return 0;
+    if (nodo == nullptr) return 0;
+    return 1 + std::max(altura(nodo->der), altura (nodo->izq));
 }
 
 // Ejercicio 5 — Tamaño
@@ -77,8 +87,8 @@ int tamanio(NodoAB<int>* nodo)
     //   - Si el nodo es nulo, el tamaño es 0.
     //   - Si no, el tamaño es 1 + tamaño del subárbol izquierdo + tamaño
     //     del subárbol derecho.
-    (void)nodo;
-    return 0;
+    if (nodo == nullptr) return 0;
+    return 1 + tamanio(nodo->izq) + tamanio(nodo->der);
 }
 
 // ============================================================================
@@ -94,9 +104,13 @@ NodoAB<int>* buscar(NodoAB<int>* nodo, int valor)
     //   - Si el valor es igual al del nodo, lo encontramos (devolver nodo).
     //   - Si el valor es menor, buscar en el subárbol izquierdo.
     //   - Si el valor es mayor, buscar en el subárbol derecho.
-    (void)nodo;
-    (void)valor;
-    return nullptr;
+    if (nodo == nullptr) return nullptr;
+    
+    if (nodo->valor == valor) return nodo;
+    
+    if (nodo->valor > valor) return buscar(nodo->izq, valor);
+
+    return buscar(nodo->der, valor);
 }
 
 // Ejercicio 7 — Inserción en ABB
@@ -111,11 +125,23 @@ NodoAB<int>* insertar(NodoAB<int>* nodo, int valor)
     //     actualizar nodo->der.
     //   - Si el valor es igual, no hacer nada (no permitimos duplicados).
     //   - Devolver el nodo (puede ser el nuevo nodo si era nulo).
-    (void)nodo;
-    (void)valor;
-    return nullptr;
-}
+    if (nodo == nullptr) {
+    NodoAB <int> *nodo_nuevo = new NodoAB <int> (valor);
+    return nodo_nuevo;
+    }
+    
+    if (nodo->valor > valor ){
+        nodo->izq = insertar(nodo->izq, valor);  
+    }
 
+    if ( nodo->valor < valor) {
+        nodo->der = insertar(nodo->der, valor);
+    }
+
+    return nodo;
+    
+
+}
 // Ejercicio 8 — Mínimo en ABB
 NodoAB<int>* minimo(NodoAB<int>* nodo)
 {
@@ -123,8 +149,8 @@ NodoAB<int>* minimo(NodoAB<int>* nodo)
     // Recordá:
     //   - El mínimo está en el nodo más a la izquierda.
     //   - Mientras haya hijo izquierdo, avanzar hacia la izquierda.
-    (void)nodo;
-    return nullptr;
+    if ( nodo->izq == nullptr) return nodo;
+    return minimo(nodo->izq);
 }
 
 // Ejercicio 9 — Máximo en ABB
@@ -134,8 +160,8 @@ NodoAB<int>* maximo(NodoAB<int>* nodo)
     // Recordá:
     //   - El máximo está en el nodo más a la derecha.
     //   - Mientras haya hijo derecho, avanzar hacia la derecha.
-    (void)nodo;
-    return nullptr;
+    if(nodo->der == nullptr) return nullptr;
+    return maximo(nodo->der);
 }
 
 // Ejercicio 10 — Eliminación en ABB
@@ -149,10 +175,33 @@ NodoAB<int>* eliminar(NodoAB<int>* nodo, int valor)
     //     inorder (mínimo del subárbol derecho) y luego eliminar el
     //     sucesor recursivamente.
     // No te olvides de liberar la memoria del nodo eliminado con delete.
-    (void)nodo;
-    (void)valor;
-    return nullptr;
+    if (nodo == nullptr) return nullptr;
+
+    if (valor < nodo->valor){
+        nodo->izq = eliminar(nodo->izq, valor);
+    }
+    else if (valor > nodo->valor){
+        nodo->der = eliminar(nodo->der, valor);
+    }
+    else {
+        if (nodo->izq == nullptr){
+            NodoAB<int> *temp = nodo->der;
+            delete nodo;
+            return temp; 
+        }
+
+        if (nodo->der == nullptr){
+            NodoAB<int> *temp = nodo->izq;
+            delete nodo;
+            return temp;
+        }
+        NodoAB<int> *sucesor = minimo(nodo->der);
+        nodo->valor = sucesor->valor;
+        nodo->der = eliminar(nodo->der, sucesor->valor);  
+    }
+    return nodo;
 }
+
 
 // ============================================================================
 // EJERCICIOS PROPUESTOS
