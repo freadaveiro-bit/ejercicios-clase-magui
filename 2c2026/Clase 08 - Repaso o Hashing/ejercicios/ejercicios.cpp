@@ -24,9 +24,11 @@ int hashSuma(const std::string& clave, int m)
     // Recordá:
     //   - Acumulá en un `unsigned long` la suma de todos los caracteres.
     //   - Al final devolvé suma % m (convertido a int).
-    (void)clave;
-    (void)m;
-    return 0;
+    int suma_hash = 0;
+    for (char letra : clave){
+        suma_hash += letra;
+    }
+    return suma_hash % m;
 }
 
 // Ejercicio 2 — Hash polinomial (base 31)
@@ -37,9 +39,11 @@ int hashPolinomial(const std::string& clave, int m)
     //   - Arrancá con suma = 0 (unsigned long).
     //   - Por cada carácter c: suma = suma * 31 + c.
     //   - Al final devolvé suma % m (convertido a int).
-    (void)clave;
-    (void)m;
-    return 0;
+    int suma_pol = 0;
+    for (char c : clave){
+        suma_pol = suma_pol * 31 + c;
+    }
+    return suma_pol % m;
 }
 
 // Ejercicio 3 — Hash djb2 (Dan Bernstein)
@@ -50,9 +54,11 @@ int hashDjb2(const std::string& clave, int m)
     //   - Arrancá con hash = 5381 (unsigned long).
     //   - Por cada carácter c: hash = hash * 33 + c.
     //   - Al final devolvé hash % m (convertido a int).
-    (void)clave;
-    (void)m;
-    return 0;
+    int hash = 5381;
+    for (char c : clave){
+        hash = hash * 33 + c;
+    }
+    return hash % m;
 }
 
 // Ejercicio 4 — Contar colisiones
@@ -65,10 +71,18 @@ int contarColisiones(const std::vector<std::string>& claves, int m, FuncionHash 
     //   - Llevá un std::vector<bool> de tamaño m que indique qué buckets ya
     //     están ocupados.
     //   - Si una clave cae en un bucket ocupado, es una colisión.
-    (void)claves;                         
-    (void)m;
-    (void)funcion;
-    return 0;
+    int colisiones = 0;
+    std::vector<bool> ocupado(static_cast<size_t>(m), false);
+    for (const std::string &clave : claves){
+        int bucket = funcion(clave, m);
+        if (ocupado[static_cast<size_t>(bucket)]){
+            colisiones++;
+        }
+        else {
+            ocupado[static_cast<size_t>(bucket)] = true;
+        }
+        }
+    return colisiones;
 }
 
 // Ejercicio 5 — Bucket más largo
@@ -79,10 +93,18 @@ int bucketMasLargo(const std::vector<std::string>& claves, int m, FuncionHash fu
     //   - Llevá un std::vector<int> de tamaño m con la cantidad de claves
     //     que cayó en cada bucket.
     //   - Devolvé el máximo de esas cantidades.
-    (void)claves;
-    (void)m;
-    (void)funcion;
-    return 0;
+    std::vector<int> cantidad(static_cast<size_t>(m), 0);
+    int maximo = 0;
+    for (const std::string &clave : claves){
+        int bucket = funcion(clave, m);
+        cantidad[static_cast<size_t>(bucket)]++;
+    }
+    for (int numero : cantidad){
+        if (maximo < numero){
+            maximo = numero;
+        }
+    }
+    return maximo;
 }
 
 // ============================================================================
